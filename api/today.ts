@@ -1,4 +1,7 @@
 // Cloudflare Workers handler — self-contained, no imports from ../src/
+// @ts-expect-error — __STATIC_CONTENT_MANIFEST is injected by Cloudflare Workers Sites
+import manifestJSON from '__STATIC_CONTENT_MANIFEST';
+import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 
 // ---------------------------------------------------------------------------
 // Hebrew date helpers
@@ -118,57 +121,78 @@ function formatAsText(hebrewDate: string, day: number, psalms: PsalmResult[]): s
 // Cloudflare Workers handler
 // ---------------------------------------------------------------------------
 
-export default {
-  async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url);
-    const format = url.searchParams.get('format');
+async function handleApiRequest(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+  const format = url.searchParams.get('format');
 
-    const headers: Record<string, string> = {
-      'Cache-Control': 'public, s-maxage=3600',
-      'Access-Control-Allow-Origin': '*',
+  const headers: Record<string, string> = {
+    'Cache-Control': 'public, s-maxage=3600',
+    'Access-Control-Allow-Origin': '*',
+  };
+
+  try {
+    const day = getHebrewDayOfMonth();
+    const hebrewDate = getHebrewDateString();
+
+    const daysToRead: number[] = [day];
+    if (day === 29 && isTomorrowNewMonth()) {
+      daysToRead.push(30);
+    }
+
+    const allPsalms: PsalmResult[] = [];
+    for (const d of daysToRead) {
+      const psalms = await fetchDayPsalms(d);
+      allPsalms.push(...psalms);
+    }
+
+    if (format === 'text') {
+      return new Response(formatAsText(hebrewDate, day, allPsalms), {
+        status: 200,
+        headers: { ...headers, 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
+
+    const json = {
+      hebrewDate,
+      day,
+      psalms: allPsalms,
     };
 
-    try {
-      const day = getHebrewDayOfMonth();
-      const hebrewDate = getHebrewDateString();
-
-      const daysToRead: number[] = [day];
-      if (day === 29 && isTomorrowNewMonth()) {
-        daysToRead.push(30);
-      }
-
-      const allPsalms: PsalmResult[] = [];
-      for (const d of daysToRead) {
-        const psalms = await fetchDayPsalms(d);
-        allPsalms.push(...psalms);
-      }
-
-      if (format === 'text') {
-        return new Response(formatAsText(hebrewDate, day, allPsalms), {
-          status: 200,
-          headers: { ...headers, 'Content-Type': 'text/plain; charset=utf-8' },
-        });
-      }
-
-      const json = {
-        hebrewDate,
-        day,
-        psalms: allPsalms,
-      };
-
-      return new Response(JSON.stringify(json), {
-        status: 200,
+    return new Response(JSON.stringify(json), {
+      status: 200,
+      headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return new Response(
+      JSON.stringify({ error: message }),
+      {
+        status: 500,
         headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      return new Response(
-        JSON.stringify({ error: message }),
-        {
-          status: 500,
-          headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
-        },
+      },
+    );
+  }
+}
+
+const assetManifest = JSON.parse(manifestJSON);
+
+export default {
+  async fetch(request: Request, env: Record<string, unknown>, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url);
+
+    // API routes
+    if (url.pathname.startsWith('/api/')) {
+      return handleApiRequest(request);
+    }
+
+    // Static assets from docs/
+    try {
+      return await getAssetFromKV(
+        { request, waitUntil: ctx.waitUntil.bind(ctx) },
+        { ASSET_NAMESPACE: env.__STATIC_CONTENT as KVNamespace, ASSET_MANIFEST: assetManifest },
       );
+    } catch {
+      return new Response('Not Found', { status: 404 });
     }
   },
 };
