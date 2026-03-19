@@ -1,0 +1,45 @@
+{
+  "name": "tehilim-mcp",
+  "version": "1.0.0",
+  "description": "Bless your AI — Daily Tehilim (Psalms) for every AI chat via MCP",
+  "type": "module",
+  "bin": {
+    "tehilim-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist/",
+    "data/"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"const fs=require('fs');const f='dist/index.js';const c=fs.readFileSync(f,'utf8');fs.writeFileSync(f,'#!/usr/bin/env node\\n'+c);fs.chmodSync(f,0o755)\"",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "fetch-psalms": "tsx scripts/fetch-psalms.ts",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "tehilim",
+    "psalms",
+    "claude",
+    "ai",
+    "jewish",
+    "hebrew",
+    "bible"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

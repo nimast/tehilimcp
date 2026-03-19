@@ -1,0 +1,680 @@
+/* ==========================================================================
+   TEHILIM MCP — LANDING PAGE STYLES
+   Bold. Proud. Gold on Navy. Proclamation-style.
+   ========================================================================== */
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0A1628;
+  --bg-alt: #0E1D35;
+  --gold: #D4AF37;
+  --gold-dim: #B8972E;
+  --white: #FFFFFF;
+  --blue: #0038B8;
+  --code-bg: #1A2332;
+  --code-text: #D4AF37;
+  --font-display-en: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-display-he: 'David Libre', 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Bilingual Visibility ---------- */
+html[lang="en"] .lang-he { display: none !important; }
+html[lang="he"] .lang-en { display: none !important; }
+
+/* ---------- RTL Adjustments ---------- */
+html[dir="rtl"] {
+  text-align: right;
+}
+
+html[dir="rtl"] .feature-list li {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .feature-marker {
+  margin-left: 16px;
+  margin-right: 0;
+}
+
+html[dir="rtl"] .lang-toggle {
+  right: auto;
+  left: 20px;
+}
+
+html[dir="rtl"] .footer-content {
+  text-align: right;
+}
+
+/* ---------- Container ---------- */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Language Toggle ---------- */
+.lang-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--code-bg);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-toggle:hover,
+.lang-toggle:focus-visible {
+  background: var(--gold);
+  color: var(--bg);
+  outline: none;
+}
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  overflow: hidden;
+}
+
+/* Flag Background */
+.hero-flags {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.flag {
+  position: absolute;
+  width: 80%;
+  max-width: 700px;
+  height: auto;
+  opacity: 0.06;
+}
+
+.flag-israel {
+  left: -10%;
+  top: 10%;
+}
+
+.flag-us {
+  right: -10%;
+  bottom: 10%;
+}
+
+/* Hero content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  font-family: var(--font-display-en);
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 4px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-shadow: 0 0 60px rgba(212, 175, 55, 0.3);
+  margin-bottom: 24px;
+}
+
+html[lang="he"] .hero-title {
+  font-family: var(--font-display-he);
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: clamp(2.8rem, 9vw, 6.5rem);
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--white);
+  margin-bottom: 48px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+html[lang="he"] .hero-subtitle {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* CTA Button */
+.cta-button {
+  display: inline-block;
+  padding: 18px 48px;
+  background: var(--gold);
+  color: var(--bg);
+  font-family: var(--font-display-en);
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 3px solid var(--gold);
+  transition: background 0.2s, color 0.2s;
+}
+
+html[lang="he"] .cta-button {
+  font-family: var(--font-display-he);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.cta-button:hover,
+.cta-button:focus-visible {
+  background: transparent;
+  color: var(--gold);
+  outline: none;
+}
+
+/* Hero borders */
+.hero-border-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gold);
+}
+
+.hero-border-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ==========================================================================
+   SECTIONS — shared
+   ========================================================================== */
+
+.section {
+  padding: 80px 0;
+}
+
+.section-alt {
+  background: var(--bg-alt);
+}
+
+.section-title {
+  font-family: var(--font-display-en);
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 900;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+html[lang="he"] .section-title {
+  font-family: var(--font-display-he);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: var(--gold);
+  margin: 16px auto 0;
+}
+
+/* ==========================================================================
+   TODAY'S READING
+   ========================================================================== */
+
+.reading-card {
+  background: var(--code-bg);
+  border: 2px solid var(--gold);
+  padding: 32px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.reading-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.reading-date {
+  font-size: 0.9rem;
+  color: var(--gold-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reading-psalms {
+  font-family: var(--font-display-en);
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+html[lang="he"] .reading-psalms {
+  font-family: var(--font-display-he);
+}
+
+.reading-preview {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  min-height: 80px;
+}
+
+.reading-preview .verse {
+  margin-bottom: 8px;
+}
+
+.reading-preview .verse-he {
+  font-family: var(--font-display-he);
+  font-size: 1.15rem;
+  color: var(--white);
+  direction: rtl;
+  text-align: right;
+}
+
+.reading-preview .verse-en {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  direction: ltr;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.reading-preview .sefaria-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Shimmer loading animation */
+.shimmer-line {
+  height: 16px;
+  background: linear-gradient(90deg, var(--code-bg) 25%, rgba(212, 175, 55, 0.08) 50%, var(--code-bg) 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 12px;
+}
+
+.shimmer-short {
+  width: 60%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   WHAT YOU GET
+   ========================================================================== */
+
+.proclamation {
+  font-family: var(--font-display-en);
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+  text-align: center;
+  color: var(--white);
+  max-width: 700px;
+  margin: 0 auto 48px;
+  line-height: 1.5;
+}
+
+html[lang="he"] .proclamation {
+  font-family: var(--font-display-he);
+}
+
+.feature-list {
+  list-style: none;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.feature-marker {
+  color: var(--gold);
+  font-size: 1.2rem;
+  margin-right: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.feature-list strong {
+  color: var(--gold);
+}
+
+/* ==========================================================================
+   INSTALLATION TABS
+   ========================================================================== */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 3px solid var(--gold);
+  margin-bottom: 0;
+}
+
+.tab {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid transparent;
+  border-bottom: none;
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  position: relative;
+  top: 3px;
+}
+
+.tab:hover {
+  color: var(--gold);
+}
+
+.tab.active {
+  background: var(--code-bg);
+  color: var(--gold);
+  border-color: var(--gold);
+  border-bottom: 3px solid var(--code-bg);
+}
+
+.tab-panel {
+  display: none;
+  background: var(--code-bg);
+  border: 2px solid var(--gold);
+  border-top: none;
+  padding: 32px;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.install-note {
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.install-note code {
+  color: var(--gold);
+  font-size: 0.9em;
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 6px;
+}
+
+/* ---------- Code Block ---------- */
+.code-block {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 20px;
+  padding-right: 90px;
+  overflow-x: auto;
+}
+
+.code-block pre {
+  margin: 0;
+}
+
+.code-block code {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.9rem;
+  color: var(--code-text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ---------- Copy Button ---------- */
+.copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.copy-btn:hover {
+  opacity: 0.85;
+}
+
+.copy-btn .copy-done {
+  display: none;
+}
+
+.copy-btn.copied .copy-text {
+  display: none;
+}
+
+.copy-btn.copied .copy-done {
+  display: inline;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.footer {
+  border-top: 3px solid var(--gold);
+  padding: 32px 0;
+  text-align: center;
+}
+
+.footer-content {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-content p {
+  margin-bottom: 8px;
+}
+
+.footer-content a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+.footer-sep {
+  margin: 0 12px;
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 80vh;
+    padding: 60px 20px 40px;
+  }
+
+  .hero-title {
+    letter-spacing: 2px;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+
+  .tab {
+    top: 0;
+    border: 2px solid transparent;
+    text-align: left;
+  }
+
+  .tab.active {
+    border: 2px solid var(--gold);
+    border-bottom: 2px solid var(--gold);
+    background: var(--code-bg);
+  }
+
+  .tab-panel {
+    border-top: none;
+    border: 2px solid var(--gold);
+    margin-top: -2px;
+  }
+
+  .code-block {
+    padding-right: 20px;
+    padding-bottom: 50px;
+  }
+
+  .copy-btn {
+    top: auto;
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .flag-israel {
+    left: -30%;
+    width: 120%;
+  }
+
+  .flag-us {
+    right: -30%;
+    width: 120%;
+  }
+
+  .reading-header {
+    flex-direction: column;
+  }
+
+  .cta-button {
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    letter-spacing: 1px;
+  }
+
+  .hero-subtitle {
+    letter-spacing: 0;
+    font-size: 1rem;
+  }
+
+  .reading-card {
+    padding: 20px;
+  }
+
+  .tab-panel {
+    padding: 20px;
+  }
+
+  .lang-toggle {
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  html[dir="rtl"] .lang-toggle {
+    right: auto;
+    left: 12px;
+  }
+}
+
+/* RTL tab adjustment */
+html[dir="rtl"] .tab {
+  text-align: right;
+}
+
+html[dir="rtl"] .code-block {
+  direction: ltr;
+  text-align: left;
+}

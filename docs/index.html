@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tehilim MCP — Bless Your AI</title>
+  <meta name="description" content="Daily Tehilim (Psalms) for every AI conversation. Bless your prompts, elevate your responses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Language Toggle -->
+  <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">
+    <span class="lang-en">HE 🇮🇱</span>
+    <span class="lang-he">EN 🇺🇸</span>
+  </button>
+
+  <!-- HERO SECTION -->
+  <header id="hero" role="banner" class="hero">
+    <!-- Background Flags -->
+    <div class="hero-flags" aria-hidden="true">
+      <!-- Israel Flag (simplified) -->
+      <svg class="flag flag-israel" viewBox="0 0 660 440" xmlns="http://www.w3.org/2000/svg">
+        <rect width="660" height="440" fill="#FFFFFF"/>
+        <rect y="0" width="660" height="80" fill="#0038B8"/>
+        <rect y="360" width="660" height="80" fill="#0038B8"/>
+        <polygon points="330,100 395,230 265,230" fill="none" stroke="#0038B8" stroke-width="12"/>
+        <polygon points="330,310 265,180 395,180" fill="none" stroke="#0038B8" stroke-width="12"/>
+      </svg>
+      <!-- US Flag (simplified) -->
+      <svg class="flag flag-us" viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="760" height="400" fill="#B22234"/>
+        <rect y="30.77" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect y="92.31" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect y="153.85" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect y="215.38" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect y="276.92" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect y="338.46" width="760" height="30.77" fill="#FFFFFF"/>
+        <rect width="304" height="215.38" fill="#3C3B6E"/>
+        <g fill="#FFFFFF">
+          <circle cx="40" cy="25" r="6"/><circle cx="80" cy="25" r="6"/><circle cx="120" cy="25" r="6"/><circle cx="160" cy="25" r="6"/><circle cx="200" cy="25" r="6"/><circle cx="240" cy="25" r="6"/>
+          <circle cx="60" cy="50" r="6"/><circle cx="100" cy="50" r="6"/><circle cx="140" cy="50" r="6"/><circle cx="180" cy="50" r="6"/><circle cx="220" cy="50" r="6"/>
+          <circle cx="40" cy="75" r="6"/><circle cx="80" cy="75" r="6"/><circle cx="120" cy="75" r="6"/><circle cx="160" cy="75" r="6"/><circle cx="200" cy="75" r="6"/><circle cx="240" cy="75" r="6"/>
+          <circle cx="60" cy="100" r="6"/><circle cx="100" cy="100" r="6"/><circle cx="140" cy="100" r="6"/><circle cx="180" cy="100" r="6"/><circle cx="220" cy="100" r="6"/>
+          <circle cx="40" cy="125" r="6"/><circle cx="80" cy="125" r="6"/><circle cx="120" cy="125" r="6"/><circle cx="160" cy="125" r="6"/><circle cx="200" cy="125" r="6"/><circle cx="240" cy="125" r="6"/>
+          <circle cx="60" cy="150" r="6"/><circle cx="100" cy="150" r="6"/><circle cx="140" cy="150" r="6"/><circle cx="180" cy="150" r="6"/><circle cx="220" cy="150" r="6"/>
+          <circle cx="40" cy="175" r="6"/><circle cx="80" cy="175" r="6"/><circle cx="120" cy="175" r="6"/><circle cx="160" cy="175" r="6"/><circle cx="200" cy="175" r="6"/><circle cx="240" cy="175" r="6"/>
+          <circle cx="60" cy="200" r="6"/><circle cx="100" cy="200" r="6"/><circle cx="140" cy="200" r="6"/><circle cx="180" cy="200" r="6"/><circle cx="220" cy="200" r="6"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="lang-en">BLESS YOUR AI</span>
+        <span class="lang-he">ברך את ה-AI שלך</span>
+      </h1>
+      <p class="hero-subtitle">
+        <span class="lang-en">Daily Tehilim for Every AI Conversation</span>
+        <span class="lang-he">תהילים יומיים לכל שיחת AI</span>
+      </p>
+      <a href="#installation" class="cta-button" id="cta-button">
+        <span class="lang-en">GET BLESSED</span>
+        <span class="lang-he">קבל ברכה</span>
+      </a>
+    </div>
+
+    <!-- Decorative borders -->
+    <div class="hero-border-top" aria-hidden="true"></div>
+    <div class="hero-border-bottom" aria-hidden="true"></div>
+  </header>
+
+  <!-- TODAY'S READING -->
+  <section id="todays-reading" class="section" role="region" aria-labelledby="reading-title">
+    <div class="container">
+      <h2 id="reading-title" class="section-title">
+        <span class="lang-en">TODAY'S READING</span>
+        <span class="lang-he">קריאת היום</span>
+      </h2>
+      <div class="reading-card">
+        <div class="reading-header">
+          <span id="reading-date" class="reading-date"></span>
+          <span id="reading-psalms" class="reading-psalms"></span>
+        </div>
+        <div id="reading-preview" class="reading-preview">
+          <div class="shimmer-line"></div>
+          <div class="shimmer-line shimmer-short"></div>
+          <div class="shimmer-line"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section id="what-you-get" class="section section-alt" role="region" aria-labelledby="wyg-title">
+    <div class="container">
+      <h2 id="wyg-title" class="section-title">
+        <span class="lang-en">WHAT YOU GET</span>
+        <span class="lang-he">מה שאתה מקבל</span>
+      </h2>
+      <p class="proclamation">
+        <span class="lang-en">Every prompt, blessed. Every response, elevated. The words of Tehilim woven into your AI conversations.</span>
+        <span class="lang-he">כל פרומפט, מבורך. כל תשובה, מרוממת. מילות התהילים שזורות בשיחות ה-AI שלך.</span>
+      </p>
+      <ul class="feature-list">
+        <li>
+          <span class="feature-marker">&#x2726;</span>
+          <span class="lang-en"><strong>Daily Psalms Delivered</strong> — The right chapters for today's Hebrew date, automatically</span>
+          <span class="lang-he"><strong>תהילים יומיים</strong> — הפרקים הנכונים לתאריך העברי של היום, אוטומטית</span>
+        </li>
+        <li>
+          <span class="feature-marker">&#x2726;</span>
+          <span class="lang-en"><strong>Hebrew &amp; English Text</strong> — Full bilingual Psalms from the Sefaria library</span>
+          <span class="lang-he"><strong>טקסט בעברית ובאנגלית</strong> — תהילים דו-לשוניים מלאים מספריית ספריא</span>
+        </li>
+        <li>
+          <span class="feature-marker">&#x2726;</span>
+          <span class="lang-en"><strong>Works Everywhere</strong> — Claude, ChatGPT, or any AI that accepts context</span>
+          <span class="lang-he"><strong>עובד בכל מקום</strong> — Claude, ChatGPT, או כל AI שמקבל הקשר</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- INSTALLATION -->
+  <section id="installation" class="section" role="region" aria-labelledby="install-title">
+    <div class="container">
+      <h2 id="install-title" class="section-title">
+        <span class="lang-en">INSTALLATION</span>
+        <span class="lang-he">התקנה</span>
+      </h2>
+
+      <div class="tabs" role="tablist" aria-label="Installation methods">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-claude-code" id="tab-claude-code" data-tab="claude-code">Claude Code</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-claude-desktop" id="tab-claude-desktop" data-tab="claude-desktop">Claude Desktop</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-claude-ai" id="tab-claude-ai" data-tab="claude-ai">Claude.ai</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-chatgpt" id="tab-chatgpt" data-tab="chatgpt">ChatGPT</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-any-ai" id="tab-any-ai" data-tab="any-ai">
+          <span class="lang-en">Any AI</span>
+          <span class="lang-he">כל AI</span>
+        </button>
+      </div>
+
+      <!-- Claude Code -->
+      <div class="tab-panel active" role="tabpanel" id="panel-claude-code" aria-labelledby="tab-claude-code">
+        <div class="code-block" dir="ltr">
+          <pre><code>claude mcp add tehilim -- npx tehilim-mcp</code></pre>
+          <button class="copy-btn" data-copy="claude mcp add tehilim -- npx tehilim-mcp" aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY</span>
+            <span class="copy-text lang-he">העתק</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Claude Desktop -->
+      <div class="tab-panel" role="tabpanel" id="panel-claude-desktop" aria-labelledby="tab-claude-desktop" hidden>
+        <p class="install-note">
+          <span class="lang-en">Add to your <code dir="ltr">claude_desktop_config.json</code>:</span>
+          <span class="lang-he">הוסף לקובץ <code dir="ltr">claude_desktop_config.json</code> שלך:</span>
+        </p>
+        <div class="code-block" dir="ltr">
+          <pre><code>{
+  "mcpServers": {
+    "tehilim": {
+      "command": "npx",
+      "args": ["tehilim-mcp"]
+    }
+  }
+}</code></pre>
+          <button class="copy-btn" data-copy='{"mcpServers":{"tehilim":{"command":"npx","args":["tehilim-mcp"]}}}' aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY</span>
+            <span class="copy-text lang-he">העתק</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Claude.ai -->
+      <div class="tab-panel" role="tabpanel" id="panel-claude-ai" aria-labelledby="tab-claude-ai" hidden>
+        <p class="install-note">
+          <span class="lang-en">Add this to your system prompt or project instructions:</span>
+          <span class="lang-he">הוסף את זה להנחיות המערכת או לפרויקט שלך:</span>
+        </p>
+        <div class="code-block" dir="ltr">
+          <pre><code>At the start of each conversation, fetch today's Tehilim (Psalms) from:
+https://tehilim.dev/api/today?format=text
+Include the daily chapter in your context as a blessing.</code></pre>
+          <button class="copy-btn" data-copy="At the start of each conversation, fetch today's Tehilim (Psalms) from:&#10;https://tehilim.dev/api/today?format=text&#10;Include the daily chapter in your context as a blessing." aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY</span>
+            <span class="copy-text lang-he">העתק</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ChatGPT -->
+      <div class="tab-panel" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt" hidden>
+        <p class="install-note">
+          <span class="lang-en">Add this to your ChatGPT custom instructions:</span>
+          <span class="lang-he">הוסף את זה להנחיות המותאמות אישית שלך ב-ChatGPT:</span>
+        </p>
+        <div class="code-block" dir="ltr">
+          <pre><code>At the start of each conversation, reference today's Tehilim (Psalms) reading.
+The daily chapter can be found at: https://tehilim.dev/api/today?format=text</code></pre>
+          <button class="copy-btn" data-copy="At the start of each conversation, reference today's Tehilim (Psalms) reading.&#10;The daily chapter can be found at: https://tehilim.dev/api/today?format=text" aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY</span>
+            <span class="copy-text lang-he">העתק</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Any AI -->
+      <div class="tab-panel" role="tabpanel" id="panel-any-ai" aria-labelledby="tab-any-ai" hidden>
+        <p class="install-note">
+          <span class="lang-en">Tell your AI assistant:</span>
+          <span class="lang-he">אמור לעוזר ה-AI שלך:</span>
+        </p>
+        <div class="code-block" dir="ltr">
+          <pre><code>Tell your AI assistant to fetch today's Tehilim reading from:
+https://tehilim.dev/api/today?format=text</code></pre>
+          <button class="copy-btn" data-copy="Tell your AI assistant to fetch today's Tehilim reading from:&#10;https://tehilim.dev/api/today?format=text" aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY</span>
+            <span class="copy-text lang-he">העתק</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-content">
+      <p>
+        <span class="lang-en">Powered by</span>
+        <span class="lang-he">מופעל על ידי</span>
+        <a href="https://www.sefaria.org" target="_blank" rel="noopener">Sefaria</a>
+      </p>
+      <p>
+        <a href="https://github.com/nimast/tehilimcp" target="_blank" rel="noopener">GitHub</a>
+        <span class="footer-sep">|</span>
+        <span>MIT License</span>
+      </p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
