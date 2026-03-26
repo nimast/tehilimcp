@@ -4,6 +4,8 @@ import manifestJSON from '__STATIC_CONTENT_MANIFEST';
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 import { getHebrewDayOfMonth, getHebrewDateString, getDailyReading, type ChapterRef } from '../src/schedule.js';
 import { fetchPsalm, type PsalmText } from '../src/sefaria.js';
+import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
+import { createTehilimServer } from '../src/mcp-tools.js';
 
 // ---------------------------------------------------------------------------
 // Rate limiting — 60 requests per minute per IP
@@ -243,6 +245,34 @@ async function handleApiRequest(request: Request): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// Remote MCP endpoint — stateless, one server per request
+// ---------------------------------------------------------------------------
+
+async function handleMcpRequest(request: Request): Promise<Response> {
+  const server = createTehilimServer();
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined, // stateless — no session tracking
+  });
+
+  await server.connect(transport);
+
+  const response = await transport.handleRequest(request);
+
+  // Add CORS headers for remote MCP clients
+  const headers = new Headers(response.headers);
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, mcp-session-id, mcp-protocol-version');
+  headers.set('Access-Control-Expose-Headers', 'mcp-session-id');
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Cloudflare Workers handler
 // ---------------------------------------------------------------------------
 
@@ -251,6 +281,24 @@ const assetManifest = JSON.parse(manifestJSON);
 export default {
   async fetch(request: Request, env: Record<string, unknown>, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    // CORS preflight for MCP
+    if (url.pathname === '/mcp' && request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, mcp-session-id, mcp-protocol-version',
+          'Access-Control-Expose-Headers': 'mcp-session-id',
+        },
+      });
+    }
+
+    // Remote MCP endpoint
+    if (url.pathname === '/mcp') {
+      return handleMcpRequest(request);
+    }
 
     // API routes
     if (url.pathname.startsWith('/api/')) {
