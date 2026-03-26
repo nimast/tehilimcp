@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { fetchPsalm, fetchDailyReading, type PsalmText } from "./sefaria.js";
+import { fetchPsalm, fetchDailyReading } from "./sefaria.js";
 
 const server = new McpServer({
   name: "tehilim-mcp",
@@ -30,16 +30,15 @@ server.resource(
 
 // ---------------------------------------------------------------------------
 // Tool: get_daily_tehilim
-// Returns today's Tehilim reading with optional language filter and date.
+// Returns today's Tehilim reading with optional date override.
 // ---------------------------------------------------------------------------
 
 server.tool(
   "get_daily_tehilim",
   {
-    language: z.enum(["hebrew", "english", "both"]).optional().default("both"),
     date: z.string().optional().describe("ISO date string to override today's date"),
   },
-  async ({ language: _language, date }) => {
+  async ({ date }) => {
     const targetDate = date ? new Date(date) : undefined;
     const text = await fetchDailyReading(targetDate);
     return { content: [{ type: "text" as const, text }] };
@@ -47,58 +46,68 @@ server.tool(
 );
 
 // ---------------------------------------------------------------------------
-// Tool: get_psalm
-// Look up any specific Psalm by chapter number (1-150).
+// Tool: gematria
+// Calculate the gematria (Hebrew numerology) of a word and discover its
+// connected Psalm.
 // ---------------------------------------------------------------------------
+
+const GEMATRIA_VALUES: Record<string, number> = {
+  "א": 1, "ב": 2, "ג": 3, "ד": 4, "ה": 5, "ו": 6, "ז": 7, "ח": 8, "ט": 9,
+  "י": 10, "כ": 20, "ך": 20, "ל": 30, "מ": 40, "ם": 40, "נ": 50, "ן": 50,
+  "ס": 60, "ע": 70, "פ": 80, "ף": 80, "צ": 90, "ץ": 90,
+  "ק": 100, "ר": 200, "ש": 300, "ת": 400,
+};
+
+function calculateGematria(text: string): number {
+  let total = 0;
+  for (const char of text) {
+    total += GEMATRIA_VALUES[char] ?? 0;
+  }
+  return total;
+}
 
 server.tool(
-  "get_psalm",
+  "gematria",
+  "Calculate the gematria (Hebrew numerology) of a word and discover its connected Psalm. Enter any Hebrew word to find its numerical value and the Psalm chapter it maps to.",
   {
-    chapter: z.number().int().min(1).max(150).describe("Psalm chapter number (1-150)"),
-    language: z.enum(["hebrew", "english", "both"]).optional().default("both"),
+    text: z.string().max(1000).describe("A Hebrew word or phrase"),
   },
-  async ({ chapter, language }) => {
+  async ({ text }) => {
+    const value = calculateGematria(text);
+    if (value === 0) {
+      return {
+        content: [{
+          type: "text" as const,
+          text: "No Hebrew letters found in the input. Please enter a Hebrew word or phrase.",
+        }],
+      };
+    }
+    const chapter = ((value - 1) % 150) + 1;
     const psalm = await fetchPsalm(chapter);
-    const text = formatPsalm(psalm, chapter, language);
-    return { content: [{ type: "text" as const, text }] };
-  }
-);
 
-// ---------------------------------------------------------------------------
-// Formatting helper for get_psalm
-// ---------------------------------------------------------------------------
+    const lines: string[] = [];
+    lines.push(`# Gematria: ${text}`);
+    lines.push("");
+    lines.push(`**Gematria value:** ${value}`);
+    lines.push(`**Mapped to Psalm:** ${chapter}`);
+    lines.push("");
+    lines.push(`# ${psalm.heRef}`);
+    lines.push(`## ${psalm.ref}`);
+    lines.push("");
 
-function formatPsalm(
-  psalm: PsalmText,
-  _chapter: number,
-  language: "hebrew" | "english" | "both",
-): string {
-  const lines: string[] = [];
-
-  lines.push(`# ${psalm.heRef}`);
-  lines.push(`## ${psalm.ref}`);
-  lines.push("");
-
-  const verseCount = Math.max(psalm.hebrew.length, psalm.english.length);
-
-  for (let i = 0; i < verseCount; i++) {
-    const verseNum = i + 1;
-    const heVerse = psalm.hebrew[i] ?? "";
-    const enVerse = psalm.english[i] ?? "";
-
-    if (language === "hebrew" || language === "both") {
+    const verseCount = Math.max(psalm.hebrew.length, psalm.english.length);
+    for (let i = 0; i < verseCount; i++) {
+      const verseNum = i + 1;
+      const heVerse = psalm.hebrew[i] ?? "";
+      const enVerse = psalm.english[i] ?? "";
       lines.push(`**${verseNum}.** ${heVerse}`);
-    }
-    if (language === "english" || language === "both") {
       lines.push(`*${verseNum}. ${enVerse}*`);
-    }
-    if (language === "both") {
       lines.push("");
     }
-  }
 
-  return lines.join("\n");
-}
+    return { content: [{ type: "text" as const, text: lines.join("\n") }] };
+  }
+);
 
 // ---------------------------------------------------------------------------
 // Server start

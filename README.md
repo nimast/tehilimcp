@@ -1,16 +1,18 @@
-# תהילים MCP — Bless Your AI
+# Tehilim MCP — Bless Your Prompt
 
-**Daily Tehilim (Psalms) for every AI conversation.**
+**Ancient wisdom in every AI conversation.**
 
-[Live site](https://tehilim-api.nimast8652.workers.dev)
+[blessyourprompt.com](https://blessyourprompt.com)
 
 ---
 
-## What is this?
+## What is Tehilim?
 
-An MCP server that brings the daily Tehilim chapter into your Claude conversations, based on the Hebrew calendar. Follow the traditional 30-day monthly cycle — automatically.
+**Tehilim** (תהילים) is the Hebrew name for the Book of Psalms — 150 chapters of poetry written over 3,000 years ago. They express the full range of human emotion: joy, grief, gratitude, wonder, and praise.
 
-No Claude? No problem. Any AI chat can fetch today's chapter via the API endpoint.
+For millennia, people of all faiths have turned to the Psalms for comfort and inspiration. A traditional practice divides the 150 chapters across the 30 days of the Hebrew month, so the entire book is read each month.
+
+**Tehilim MCP** brings this ancient practice into the age of AI — automatically delivering today's chapters to your AI conversations via the [Model Context Protocol](https://modelcontextprotocol.io).
 
 ---
 
@@ -43,7 +45,7 @@ Paste into your project instructions or custom instructions:
 
 ```
 At the start of each conversation, fetch today's Tehilim (Psalms) from:
-https://tehilim-api.nimast8652.workers.dev/api/today?format=text
+https://blessyourprompt.com/api/today?format=text
 Include the daily chapter in your context as a blessing.
 ```
 
@@ -55,6 +57,7 @@ Include the daily chapter in your context as a blessing.
 |---|---|
 | `GET /api/today` | JSON with today's reading |
 | `GET /api/today?format=text` | Plain text for AI chats |
+| `GET /api/psalm/:chapter` | Individual psalm (1-150) in Hebrew + English |
 
 ---
 
@@ -62,8 +65,8 @@ Include the daily chapter in your context as a blessing.
 
 - Uses the traditional 30-day monthly Tehilim cycle
 - Hebrew date calculated via the built-in `Intl` API
-- Text from Sefaria API with bundled fallback for all 150 Psalms
-- MCP server exposes a `tehilim://today` resource and `get_daily_tehilim` / `get_psalm` tools
+- Text from [Sefaria](https://www.sefaria.org) API with bundled fallback for all 150 Psalms
+- MCP server exposes a `tehilim://today` resource, `get_daily_tehilim` tool, and a `gematria` Easter egg
 
 ---
 
@@ -72,8 +75,8 @@ Include the daily chapter in your context as a blessing.
 ```bash
 npm install
 npm run build
-npm test        # 17 tests
-npm run dev     # Run MCP server with tsx
+npm test
+npm run dev       # Run MCP server with tsx
 npx wrangler dev  # Run API + landing page locally
 ```
 

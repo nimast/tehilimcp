@@ -25,6 +25,30 @@ describe('stripHtml', () => {
   it('returns plain text unchanged', () => {
     expect(stripHtml('just plain text')).toBe('just plain text');
   });
+
+  it('decodes &amp; entity', () => {
+    expect(stripHtml('bread &amp; butter')).toBe('bread & butter');
+  });
+
+  it('decodes &nbsp; as space', () => {
+    expect(stripHtml('word&nbsp;word')).toBe('word word');
+  });
+
+  it('decodes &thinsp; as space', () => {
+    expect(stripHtml('word&thinsp;word')).toBe('word word');
+  });
+
+  it('decodes numeric entities', () => {
+    expect(stripHtml('&#8217;')).toBe('\u2019'); // right single quote
+  });
+
+  it('decodes hex entities', () => {
+    expect(stripHtml('&#x2019;')).toBe('\u2019'); // right single quote
+  });
+
+  it('handles combined tags and entities', () => {
+    expect(stripHtml('<b>bread &amp; butter</b>')).toBe('bread & butter');
+  });
 });
 
 describe('fetchPsalm', () => {
@@ -50,6 +74,16 @@ describe('fetchPsalm', () => {
   it('returns non-empty english array', async () => {
     const result = await fetchPsalm(23);
     expect(result.english.length).toBeGreaterThan(0);
+  });
+});
+
+describe('fetchPsalm fallback', () => {
+  it('returns valid data for Psalm 23 even with bundled fallback', async () => {
+    // Psalm 23 should always work — either from API or bundled data
+    const result = await fetchPsalm(23);
+    expect(result.hebrew.length).toBeGreaterThan(0);
+    expect(result.english.length).toBeGreaterThan(0);
+    expect(result.ref).toContain('Psalms');
   });
 });
 

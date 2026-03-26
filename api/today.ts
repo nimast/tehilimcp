@@ -1,115 +1,75 @@
-// Cloudflare Workers handler — self-contained, no imports from ../src/
+// Cloudflare Workers handler — imports shared logic from ../src/
 // @ts-expect-error — __STATIC_CONTENT_MANIFEST is injected by Cloudflare Workers Sites
 import manifestJSON from '__STATIC_CONTENT_MANIFEST';
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
+import { getHebrewDayOfMonth, getHebrewDateString, getDailyReading, type ChapterRef } from '../src/schedule.js';
+import { fetchPsalm, type PsalmText } from '../src/sefaria.js';
 
 // ---------------------------------------------------------------------------
-// Hebrew date helpers
+// Rate limiting — 60 requests per minute per IP
 // ---------------------------------------------------------------------------
 
-function getHebrewDayOfMonth(): number {
-  const formatter = new Intl.DateTimeFormat('en-u-ca-hebrew', { day: 'numeric' });
-  const parts = formatter.formatToParts(new Date());
-  const dayPart = parts.find(p => p.type === 'day');
-  return parseInt(dayPart!.value, 10);
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
 }
 
-function getHebrewDateString(): string {
-  return new Intl.DateTimeFormat('he-IL-u-ca-hebrew', {
-    day: 'numeric', month: 'long', year: 'numeric'
-  }).format(new Date());
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 60;
+const rateLimitMap = new Map<string, RateLimitEntry>();
+
+let lastCleanup = Date.now();
+const CLEANUP_INTERVAL_MS = 60_000; // clean up every minute
+
+function cleanupExpiredEntries(): void {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
+  for (const [key, entry] of rateLimitMap) {
+    if (now >= entry.resetAt) {
+      rateLimitMap.delete(key);
+    }
+  }
 }
 
-function isTomorrowNewMonth(): boolean {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const formatter = new Intl.DateTimeFormat('en-u-ca-hebrew', { day: 'numeric' });
-  const parts = formatter.formatToParts(tomorrow);
-  const dayPart = parts.find(p => p.type === 'day');
-  return parseInt(dayPart!.value, 10) === 1;
-}
+function checkRateLimit(ip: string): boolean {
+  cleanupExpiredEntries();
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
 
-// ---------------------------------------------------------------------------
-// Schedule mapping — traditional 30-day Tehilim cycle
-// ---------------------------------------------------------------------------
-
-const SCHEDULE: Record<number, [number, number]> = {
-  1:[1,9],2:[10,17],3:[18,22],4:[23,28],5:[29,34],6:[35,38],7:[39,43],
-  8:[44,48],9:[49,54],10:[55,59],11:[60,65],12:[66,68],13:[69,71],
-  14:[72,76],15:[77,78],16:[79,82],17:[83,87],18:[88,89],19:[90,96],
-  20:[97,103],21:[104,105],22:[106,107],23:[108,112],24:[113,118],
-  25:[119,119],26:[119,119],27:[120,134],28:[135,139],29:[140,144],30:[145,150]
-};
-
-// ---------------------------------------------------------------------------
-// Sefaria fetch helpers
-// ---------------------------------------------------------------------------
-
-function stripHtml(text: string): string {
-  return text.replace(/<[^>]*>/g, '');
-}
-
-type PsalmResult = {
-  chapter: number;
-  ref: string;
-  heRef: string;
-  hebrew: string[];
-  english: string[];
-};
-
-async function fetchChapter(chapter: number, verseRange?: string): Promise<PsalmResult> {
-  const sefariaRef = verseRange
-    ? `Psalms.${chapter}.${verseRange}`
-    : `Psalms.${chapter}`;
-
-  const url = `https://www.sefaria.org/api/texts/${sefariaRef}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Sefaria API returned ${response.status} for ${sefariaRef}`);
+  if (!entry || now >= entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
   }
 
-  const data = await response.json() as Record<string, unknown>;
-  const hebrewRaw: string[] = Array.isArray(data.he) ? data.he as string[] : [data.he as string];
-  const englishRaw: string[] = Array.isArray(data.text) ? data.text as string[] : [data.text as string];
-
-  return {
-    chapter,
-    ref: (data.ref as string) ?? sefariaRef,
-    heRef: (data.heRef as string) ?? sefariaRef,
-    hebrew: hebrewRaw.map(stripHtml),
-    english: englishRaw.map(stripHtml),
-  };
-}
-
-async function fetchDayPsalms(day: number): Promise<PsalmResult[]> {
-  const [start, end] = SCHEDULE[day];
-
-  if (day === 25) return [await fetchChapter(119, '1-88')];
-  if (day === 26) return [await fetchChapter(119, '89-176')];
-
-  const promises: Promise<PsalmResult>[] = [];
-  for (let ch = start; ch <= end; ch++) {
-    promises.push(fetchChapter(ch));
+  entry.count++;
+  if (entry.count > RATE_LIMIT_MAX) {
+    return false;
   }
-  return Promise.all(promises);
+  return true;
 }
 
 // ---------------------------------------------------------------------------
 // Format as plain text (for AI chats)
 // ---------------------------------------------------------------------------
 
-function formatAsText(hebrewDate: string, day: number, psalms: PsalmResult[]): string {
+function formatAsText(hebrewDate: string, day: number, reading: ChapterRef[], psalms: PsalmText[]): string {
   const lines: string[] = [];
   lines.push(`Daily Tehilim — ${hebrewDate} (Day ${day})`);
   lines.push('');
 
-  for (const psalm of psalms) {
-    lines.push(`--- ${psalm.heRef} (${psalm.ref}) ---`);
+  for (let i = 0; i < psalms.length; i++) {
+    const psalm = psalms[i];
+    const ref = reading[i];
+    const label = ref && ref.startVerse != null && ref.endVerse != null
+      ? `Psalm ${ref.chapter}:${ref.startVerse}-${ref.endVerse}`
+      : `Psalm ${ref?.chapter ?? ''}`;
+
+    lines.push(`--- ${psalm.heRef} (${label}) ---`);
     lines.push('');
-    for (let i = 0; i < psalm.hebrew.length; i++) {
-      lines.push(psalm.hebrew[i]);
-      lines.push(psalm.english[i] ?? '');
+    for (let v = 0; v < psalm.hebrew.length; v++) {
+      lines.push(psalm.hebrew[v]);
+      lines.push(psalm.english[v] ?? '');
       lines.push('');
     }
   }
@@ -117,45 +77,59 @@ function formatAsText(hebrewDate: string, day: number, psalms: PsalmResult[]): s
   return lines.join('\n');
 }
 
+function formatPsalmAsText(psalm: PsalmText, chapter: number): string {
+  const lines: string[] = [];
+  lines.push(`--- ${psalm.heRef} (Psalm ${chapter}) ---`);
+  lines.push('');
+  for (let v = 0; v < psalm.hebrew.length; v++) {
+    lines.push(psalm.hebrew[v]);
+    lines.push(psalm.english[v] ?? '');
+    lines.push('');
+  }
+  return lines.join('\n');
+}
+
 // ---------------------------------------------------------------------------
-// Cloudflare Workers handler
+// API route handlers
 // ---------------------------------------------------------------------------
 
-async function handleApiRequest(request: Request): Promise<Response> {
-  const url = new URL(request.url);
-  const format = url.searchParams.get('format');
+const CORS_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Origin': '*',
+};
 
+async function handlePsalmRequest(chapter: number, url: URL): Promise<Response> {
   const headers: Record<string, string> = {
-    'Cache-Control': 'public, s-maxage=3600',
-    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'public, s-maxage=86400',
+    ...CORS_HEADERS,
   };
 
+  if (isNaN(chapter) || chapter < 1 || chapter > 150) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid chapter. Must be between 1 and 150.' }),
+      {
+        status: 400,
+        headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+      },
+    );
+  }
+
   try {
-    const day = getHebrewDayOfMonth();
-    const hebrewDate = getHebrewDateString();
-
-    const daysToRead: number[] = [day];
-    if (day === 29 && isTomorrowNewMonth()) {
-      daysToRead.push(30);
-    }
-
-    const allPsalms: PsalmResult[] = [];
-    for (const d of daysToRead) {
-      const psalms = await fetchDayPsalms(d);
-      allPsalms.push(...psalms);
-    }
+    const psalm = await fetchPsalm(chapter);
+    const format = url.searchParams.get('format');
 
     if (format === 'text') {
-      return new Response(formatAsText(hebrewDate, day, allPsalms), {
+      return new Response(formatPsalmAsText(psalm, chapter), {
         status: 200,
         headers: { ...headers, 'Content-Type': 'text/plain; charset=utf-8' },
       });
     }
 
     const json = {
-      hebrewDate,
-      day,
-      psalms: allPsalms,
+      chapter,
+      ref: psalm.ref,
+      heRef: psalm.heRef,
+      hebrew: psalm.hebrew,
+      english: psalm.english,
     };
 
     return new Response(JSON.stringify(json), {
@@ -173,6 +147,104 @@ async function handleApiRequest(request: Request): Promise<Response> {
     );
   }
 }
+
+async function handleTodayRequest(url: URL): Promise<Response> {
+  const headers: Record<string, string> = {
+    'Cache-Control': 'public, s-maxage=3600',
+    ...CORS_HEADERS,
+  };
+  const format = url.searchParams.get('format');
+
+  try {
+    const now = new Date();
+    const day = getHebrewDayOfMonth(now);
+    const hebrewDate = getHebrewDateString(now);
+    const reading = getDailyReading(now);
+
+    const psalms = await Promise.all(
+      reading.map((ref: ChapterRef) =>
+        fetchPsalm(ref.chapter, {
+          startVerse: ref.startVerse,
+          endVerse: ref.endVerse,
+        }),
+      ),
+    );
+
+    if (format === 'text') {
+      return new Response(formatAsText(hebrewDate, day, reading, psalms), {
+        status: 200,
+        headers: { ...headers, 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
+
+    const json = {
+      hebrewDate,
+      day,
+      psalms: psalms.map((psalm, i) => {
+        const ref = reading[i];
+        return {
+          chapter: ref.chapter,
+          ref: psalm.ref,
+          heRef: psalm.heRef,
+          hebrew: psalm.hebrew,
+          english: psalm.english,
+        };
+      }),
+    };
+
+    return new Response(JSON.stringify(json), {
+      status: 200,
+      headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return new Response(
+      JSON.stringify({ error: message }),
+      {
+        status: 500,
+        headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' },
+      },
+    );
+  }
+}
+
+async function handleApiRequest(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+
+  // Rate limiting check
+  const ip = request.headers.get('CF-Connecting-IP') ?? request.headers.get('X-Forwarded-For') ?? '0.0.0.0';
+  if (!checkRateLimit(ip)) {
+    return new Response(
+      JSON.stringify({ error: 'Too Many Requests' }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Retry-After': '60',
+          ...CORS_HEADERS,
+        },
+      },
+    );
+  }
+
+  // Route: /api/psalm/:chapter
+  const psalmMatch = url.pathname.match(/^\/api\/psalm\/(\d+)$/);
+  if (psalmMatch) {
+    const chapter = parseInt(psalmMatch[1], 10);
+    return handlePsalmRequest(chapter, url);
+  }
+
+  // Route: /api/today
+  if (url.pathname === '/api/today') {
+    return handleTodayRequest(url);
+  }
+
+  return new Response('Not Found', { status: 404 });
+}
+
+// ---------------------------------------------------------------------------
+// Cloudflare Workers handler
+// ---------------------------------------------------------------------------
 
 const assetManifest = JSON.parse(manifestJSON);
 

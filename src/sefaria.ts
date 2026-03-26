@@ -18,9 +18,21 @@ export type PsalmText = {
   heRef: string;
 };
 
-/** Strips HTML tags from Sefaria API response strings. */
+/** Strips HTML tags and decodes HTML entities from Sefaria API response strings. */
 export function stripHtml(text: string): string {
-  return text.replace(/<[^>]*>/g, '');
+  // Strip HTML tags
+  const noTags = text.replace(/<[^>]*>/g, '');
+  // Decode HTML entities
+  const ENTITIES: Record<string, string> = {
+    '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&apos;': "'",
+    '&nbsp;': ' ', '&thinsp;': ' ', '&ensp;': ' ', '&emsp;': ' ',
+    '&ndash;': '–', '&mdash;': '—', '&lsquo;': '\u2018', '&rsquo;': '\u2019',
+    '&ldquo;': '\u201C', '&rdquo;': '\u201D', '&hellip;': '…',
+  };
+  return noTags
+    .replace(/&[a-zA-Z]+;/g, (match) => ENTITIES[match] ?? match)
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
 // ---------------------------------------------------------------------------

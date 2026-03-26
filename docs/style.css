@@ -678,3 +678,56 @@ html[dir="rtl"] .code-block {
   direction: ltr;
   text-align: left;
 }
+
+/* ==========================================================================
+   EXPLAINER SECTIONS (What is Tehilim + Bless Your Prompt)
+   ========================================================================== */
+
+.explainer-content {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.explainer-content p {
+  margin-bottom: 24px;
+}
+
+.explainer-content p:last-child {
+  margin-bottom: 0;
+}
+
+.explainer-content strong {
+  color: var(--gold);
+}
+
+html[lang="he"] .explainer-content {
+  font-family: var(--font-display-he);
+  font-size: 1.15rem;
+}
+
+.explainer-highlight {
+  font-family: var(--font-display-en);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--gold);
+  text-align: center;
+  padding: 24px 0;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+html[lang="he"] .explainer-highlight {
+  font-family: var(--font-display-he);
+  font-style: normal;
+}
+
+/* ChatGPT browsing caveat */
+.install-caveat {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
