@@ -1,0 +1,31 @@
+openapi: 3.1.0
+info:
+  title: Bless Your Prompt
+  version: 1.0.0
+  description: Delivers today's Tehilim (Psalms) reading to bless your AI conversation. 3,000 years of ancient wisdom, one API call.
+servers:
+  - url: https://blessyourprompt.com
+paths:
+  /api/bless:
+    get:
+      operationId: get_daily_blessing
+      summary: Get today's psalm blessing
+      description: Returns today's Tehilim reading as a text blessing. The psalm changes daily following the traditional 30-day Hebrew calendar cycle.
+      parameters:
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [chatgpt, claude, claude-code, cursor, gemini]
+            default: chatgpt
+          description: Target platform for optimized response format
+      responses:
+        '200':
+          description: Today's blessing text
+          content:
+            text/plain:
+              schema:
+                type: string
+        '429':
+          description: Rate limited (60 requests per minute)

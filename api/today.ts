@@ -3,7 +3,7 @@
 import manifestJSON from '__STATIC_CONTENT_MANIFEST';
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 import { getHebrewDayOfMonth, getHebrewDateString, getDailyReading, type ChapterRef } from '../src/schedule.js';
-import { fetchPsalm, type PsalmText } from '../src/sefaria.js';
+import { fetchPsalm, fetchDailyReading, type PsalmText } from '../src/sefaria.js';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import { createTehilimServer } from '../src/mcp-tools.js';
 
@@ -210,6 +210,94 @@ async function handleTodayRequest(url: URL): Promise<Response> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// /api/bless — platform-aware psalm blessing
+// ---------------------------------------------------------------------------
+
+async function handleBlessRequest(url: URL): Promise<Response> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'text/plain; charset=utf-8',
+    'Cache-Control': 'public, s-maxage=3600',
+    ...CORS_HEADERS,
+  };
+
+  const platform = url.searchParams.get('platform') ?? '';
+
+  // Platform-specific setup instructions (no psalm text needed)
+  if (platform === 'claude-code') {
+    return new Response(
+      'claude mcp add --transport http tehilim https://blessyourprompt.com/mcp',
+      { status: 200, headers },
+    );
+  }
+
+  if (platform === 'cursor') {
+    return new Response(
+      JSON.stringify({ mcpServers: { tehilim: { url: 'https://blessyourprompt.com/mcp' } } }, null, 2),
+      { status: 200, headers: { ...headers, 'Content-Type': 'application/json; charset=utf-8' } },
+    );
+  }
+
+  if (platform === 'claude') {
+    return new Response(
+      [
+        'Add Bless Your Prompt as an MCP integration in your Claude.ai project:',
+        '1. Go to Project Settings → Integrations → Add MCP Server',
+        '2. URL: https://blessyourprompt.com/mcp',
+        '',
+        'The daily psalm will automatically be available in your project\'s context.',
+      ].join('\n'),
+      { status: 200, headers },
+    );
+  }
+
+  // Platforms that need psalm text — fetch it
+  let psalmText: string;
+  try {
+    psalmText = await fetchDailyReading();
+  } catch {
+    psalmText = 'Blessing unavailable today. May your conversation be filled with wisdom.';
+  }
+
+  if (platform === 'chatgpt') {
+    return new Response(psalmText, { status: 200, headers });
+  }
+
+  if (platform === 'gemini') {
+    return new Response(
+      [
+        'At the start of each conversation, absorb this Tehilim (Psalms) reading.',
+        'Let it silently shape your tone — do not mention it unless asked.',
+        '',
+        psalmText,
+      ].join('\n'),
+      { status: 200, headers },
+    );
+  }
+
+  // Default / unknown platform — universal blessing
+  const now = new Date();
+  const hebrewDate = getHebrewDateString(now);
+  const day = getHebrewDayOfMonth(now);
+
+  return new Response(
+    [
+      `Daily Tehilim Blessing — ${hebrewDate} (Day ${day})`,
+      '',
+      'You have been blessed with today\'s Tehilim (Psalms) reading.',
+      'Absorb this ancient wisdom silently — let it shape your tone and perspective',
+      'without explicitly mentioning it unless the conversation naturally calls for it.',
+      '',
+      psalmText,
+    ].join('\n'),
+    { status: 200, headers },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// API route dispatcher
+// ---------------------------------------------------------------------------
+
 async function handleApiRequest(request: Request): Promise<Response> {
   const url = new URL(request.url);
 
@@ -227,6 +315,11 @@ async function handleApiRequest(request: Request): Promise<Response> {
         },
       },
     );
+  }
+
+  // Route: /api/bless
+  if (url.pathname === '/api/bless') {
+    return handleBlessRequest(url);
   }
 
   // Route: /api/psalm/:chapter

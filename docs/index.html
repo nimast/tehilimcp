@@ -188,9 +188,9 @@
 
       <div class="tabs" role="tablist" aria-label="Installation methods">
         <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-claude-code" id="tab-claude-code" data-tab="claude-code">Claude Code</button>
-        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-claude-desktop" id="tab-claude-desktop" data-tab="claude-desktop">Claude Desktop</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="panel-claude-ai" id="tab-claude-ai" data-tab="claude-ai">Claude.ai</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="panel-chatgpt" id="tab-chatgpt" data-tab="chatgpt">ChatGPT</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="panel-cursor" id="tab-cursor" data-tab="cursor">Cursor</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="panel-any-ai" id="tab-any-ai" data-tab="any-ai">
           <span class="lang-en">Any AI</span>
           <span class="lang-he">כל AI</span>
@@ -200,32 +200,8 @@
       <!-- Claude Code -->
       <div class="tab-panel active" role="tabpanel" id="panel-claude-code" aria-labelledby="tab-claude-code">
         <div class="code-block" dir="ltr">
-          <pre><code>claude mcp add tehilim -- npx @hashemeta/tehilimcp</code></pre>
-          <button class="copy-btn" data-copy="claude mcp add tehilim -- npx @hashemeta/tehilimcp" aria-label="Copy to clipboard">
-            <span class="copy-text lang-en">COPY</span>
-            <span class="copy-text lang-he">העתק</span>
-            <span class="copy-done lang-en">COPIED!</span>
-            <span class="copy-done lang-he">הועתק!</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Claude Desktop -->
-      <div class="tab-panel" role="tabpanel" id="panel-claude-desktop" aria-labelledby="tab-claude-desktop" hidden>
-        <p class="install-note">
-          <span class="lang-en">Add to your <code dir="ltr">claude_desktop_config.json</code>:</span>
-          <span class="lang-he">הוסף לקובץ <code dir="ltr">claude_desktop_config.json</code> שלך:</span>
-        </p>
-        <div class="code-block" dir="ltr">
-          <pre><code>{
-  "mcpServers": {
-    "tehilim": {
-      "command": "npx",
-      "args": ["@hashemeta/tehilimcp"]
-    }
-  }
-}</code></pre>
-          <button class="copy-btn" data-copy='{"mcpServers":{"tehilim":{"command":"npx","args":["@hashemeta/tehilimcp"]}}}' aria-label="Copy to clipboard">
+          <pre><code>claude mcp add --transport http tehilim https://blessyourprompt.com/mcp</code></pre>
+          <button class="copy-btn" data-copy="claude mcp add --transport http tehilim https://blessyourprompt.com/mcp" aria-label="Copy to clipboard">
             <span class="copy-text lang-en">COPY</span>
             <span class="copy-text lang-he">העתק</span>
             <span class="copy-done lang-en">COPIED!</span>
@@ -237,16 +213,15 @@
       <!-- Claude.ai -->
       <div class="tab-panel" role="tabpanel" id="panel-claude-ai" aria-labelledby="tab-claude-ai" hidden>
         <p class="install-note">
-          <span class="lang-en">Add this to your system prompt or project instructions:</span>
-          <span class="lang-he">הוסף את זה להנחיות המערכת או לפרויקט שלך:</span>
+          <span class="lang-en">Add as an MCP integration in your project:</span>
+          <span class="lang-he">הוסף כ-MCP integration בפרויקט שלך:</span>
         </p>
         <div class="code-block" dir="ltr">
-          <pre><code>At the start of each conversation, fetch today's Tehilim (Psalms) from:
-https://blessyourprompt.com/api/today?format=text
-Include the daily chapter in your context as a blessing.</code></pre>
-          <button class="copy-btn" data-copy="At the start of each conversation, fetch today's Tehilim (Psalms) from:&#10;https://blessyourprompt.com/api/today?format=text&#10;Include the daily chapter in your context as a blessing." aria-label="Copy to clipboard">
-            <span class="copy-text lang-en">COPY</span>
-            <span class="copy-text lang-he">העתק</span>
+          <pre><code>Project Settings > Integrations > Add MCP Server
+URL: https://blessyourprompt.com/mcp</code></pre>
+          <button class="copy-btn" data-copy="https://blessyourprompt.com/mcp" aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY URL</span>
+            <span class="copy-text lang-he">העתק URL</span>
             <span class="copy-done lang-en">COPIED!</span>
             <span class="copy-done lang-he">הועתק!</span>
           </button>
@@ -256,36 +231,59 @@ Include the daily chapter in your context as a blessing.</code></pre>
       <!-- ChatGPT -->
       <div class="tab-panel" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt" hidden>
         <p class="install-note">
-          <span class="lang-en">Add this to your ChatGPT custom instructions:</span>
-          <span class="lang-he">הוסף את זה להנחיות המותאמות אישית שלך ב-ChatGPT:</span>
+          <span class="lang-en">Enable Developer Mode, then add as an MCP server:</span>
+          <span class="lang-he">הפעל Developer Mode, ואז הוסף כשרת MCP:</span>
         </p>
         <div class="code-block" dir="ltr">
-          <pre><code>At the start of each conversation, reference today's Tehilim (Psalms) reading.
-The daily chapter can be found at: https://blessyourprompt.com/api/today?format=text</code></pre>
-          <button class="copy-btn" data-copy="At the start of each conversation, reference today's Tehilim (Psalms) reading.&#10;The daily chapter can be found at: https://blessyourprompt.com/api/today?format=text" aria-label="Copy to clipboard">
+          <pre><code>Settings > Developer Mode > Add MCP Server
+URL: https://blessyourprompt.com/mcp</code></pre>
+          <button class="copy-btn" data-copy="https://blessyourprompt.com/mcp" aria-label="Copy to clipboard">
+            <span class="copy-text lang-en">COPY URL</span>
+            <span class="copy-text lang-he">העתק URL</span>
+            <span class="copy-done lang-en">COPIED!</span>
+            <span class="copy-done lang-he">הועתק!</span>
+          </button>
+        </div>
+        <p class="install-caveat">
+          <span class="lang-en">Requires ChatGPT Pro, Team, or Enterprise with Developer Mode enabled.</span>
+          <span class="lang-he">דורש ChatGPT Pro, Team, או Enterprise עם Developer Mode מופעל.</span>
+        </p>
+      </div>
+
+      <!-- Cursor / Windsurf -->
+      <div class="tab-panel" role="tabpanel" id="panel-cursor" aria-labelledby="tab-cursor" hidden>
+        <p class="install-note">
+          <span class="lang-en">Add to your MCP settings:</span>
+          <span class="lang-he">הוסף להגדרות MCP שלך:</span>
+        </p>
+        <div class="code-block" dir="ltr">
+          <pre><code>{
+  "mcpServers": {
+    "tehilim": {
+      "url": "https://blessyourprompt.com/mcp"
+    }
+  }
+}</code></pre>
+          <button class="copy-btn" data-copy='{"mcpServers":{"tehilim":{"url":"https://blessyourprompt.com/mcp"}}}' aria-label="Copy to clipboard">
             <span class="copy-text lang-en">COPY</span>
             <span class="copy-text lang-he">העתק</span>
             <span class="copy-done lang-en">COPIED!</span>
             <span class="copy-done lang-he">הועתק!</span>
           </button>
         </div>
-        <p class="install-caveat">
-          <span class="lang-en">Requires ChatGPT with browsing enabled. Works best with ChatGPT Plus or Team.</span>
-          <span class="lang-he">דורש ChatGPT עם גלישה מופעלת. עובד הכי טוב עם ChatGPT Plus או Team.</span>
-        </p>
       </div>
 
       <!-- Any AI -->
       <div class="tab-panel" role="tabpanel" id="panel-any-ai" aria-labelledby="tab-any-ai" hidden>
         <p class="install-note">
-          <span class="lang-en">Tell your AI assistant:</span>
-          <span class="lang-he">אמור לעוזר ה-AI שלך:</span>
+          <span class="lang-en">Add to your custom instructions or system prompt:</span>
+          <span class="lang-he">הוסף להנחיות המותאמות או ל-system prompt שלך:</span>
         </p>
         <div class="code-block" dir="ltr">
-          <pre><code>At the start of each conversation, fetch today's Tehilim (Psalms) reading from:
-https://blessyourprompt.com/api/today?format=text
-Include the reading as context for the conversation.</code></pre>
-          <button class="copy-btn" data-copy="At the start of each conversation, fetch today's Tehilim (Psalms) reading from:&#10;https://blessyourprompt.com/api/today?format=text&#10;Include the reading as context for the conversation." aria-label="Copy to clipboard">
+          <pre><code>At the start of each conversation, fetch today's blessing from:
+https://blessyourprompt.com/api/bless
+Absorb the psalm silently into your context.</code></pre>
+          <button class="copy-btn" data-copy="At the start of each conversation, fetch today's blessing from:&#10;https://blessyourprompt.com/api/bless&#10;Absorb the psalm silently into your context." aria-label="Copy to clipboard">
             <span class="copy-text lang-en">COPY</span>
             <span class="copy-text lang-he">העתק</span>
             <span class="copy-done lang-en">COPIED!</span>

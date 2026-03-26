@@ -82,6 +82,79 @@ describe('API Integration', () => {
     });
   });
 
+  describe('GET /api/bless', () => {
+    it('returns default blessing with psalm text', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('text/plain');
+      expect(res.headers.get('cache-control')).toContain('s-maxage=3600');
+      expect(res.headers.get('access-control-allow-origin')).toBe('*');
+
+      const text = await res.text();
+      expect(text).toContain('Tehilim Blessing');
+      expect(text).toContain('Psalm');
+    });
+
+    it('returns raw psalm text for chatgpt platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=chatgpt`);
+      expect(res.status).toBe(200);
+
+      const text = await res.text();
+      expect(text).toContain('Psalm');
+      expect(text).not.toContain('Add Bless Your Prompt');
+    });
+
+    it('returns CLI command for claude-code platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=claude-code`);
+      expect(res.status).toBe(200);
+
+      const text = await res.text();
+      expect(text).toContain('claude mcp add');
+      expect(text).toContain('blessyourprompt.com/mcp');
+    });
+
+    it('returns JSON config for cursor platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=cursor`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const json = await res.json();
+      expect(json.mcpServers.tehilim.url).toBe('https://blessyourprompt.com/mcp');
+    });
+
+    it('returns MCP setup instructions for claude platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=claude`);
+      expect(res.status).toBe(200);
+
+      const text = await res.text();
+      expect(text).toContain('MCP');
+      expect(text).toContain('blessyourprompt.com/mcp');
+    });
+
+    it('returns gemini instructions for gemini platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=gemini`);
+      expect(res.status).toBe(200);
+
+      const text = await res.text();
+      expect(text).toContain('Tehilim');
+      expect(text).toContain('Psalm');
+    });
+
+    it('falls back to default for unknown platform', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=foobar`);
+      expect(res.status).toBe(200);
+
+      const text = await res.text();
+      expect(text).toContain('blessed');
+      expect(text).toContain('Psalm');
+    });
+
+    it('has CORS headers on all responses', async () => {
+      const res = await fetch(`${BASE_URL}/api/bless?platform=chatgpt`);
+      expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    });
+  });
+
   describe('CORS', () => {
     it('returns Access-Control-Allow-Origin header on API', async () => {
       const res = await fetch(`${BASE_URL}/api/today`);
