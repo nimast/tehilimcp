@@ -122,6 +122,7 @@ html[dir="rtl"] .footer-content {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .flag {
@@ -129,17 +130,26 @@ html[dir="rtl"] .footer-content {
   width: 80%;
   max-width: 700px;
   height: auto;
-  opacity: 0.06;
+  opacity: 0.08;
+  filter: blur(1px);
+  animation: flag-breathe 8s ease-in-out infinite;
 }
 
 .flag-israel {
   left: -10%;
   top: 10%;
+  animation-delay: 0s;
 }
 
 .flag-us {
   right: -10%;
   bottom: 10%;
+  animation-delay: -4s;
+}
+
+@keyframes flag-breathe {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50% { opacity: 0.10; transform: scale(1.02); }
 }
 
 /* Hero content */

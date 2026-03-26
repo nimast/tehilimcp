@@ -22,33 +22,38 @@
   <header id="hero" role="banner" class="hero">
     <!-- Background Flags -->
     <div class="hero-flags" aria-hidden="true">
-      <!-- Israel Flag (simplified) -->
+      <!-- Israel Flag — proper Star of David geometry -->
       <svg class="flag flag-israel" viewBox="0 0 660 440" xmlns="http://www.w3.org/2000/svg">
         <rect width="660" height="440" fill="#FFFFFF"/>
-        <rect y="0" width="660" height="80" fill="#0038B8"/>
-        <rect y="360" width="660" height="80" fill="#0038B8"/>
-        <polygon points="330,100 395,230 265,230" fill="none" stroke="#0038B8" stroke-width="12"/>
-        <polygon points="330,310 265,180 395,180" fill="none" stroke="#0038B8" stroke-width="12"/>
+        <rect y="88" width="660" height="44" fill="#0038B8"/>
+        <rect y="308" width="660" height="44" fill="#0038B8"/>
+        <!-- Star of David: two equilateral triangles, both centered at (330,220), circumradius 82 -->
+        <polygon points="330,138 401,261 259,261" fill="none" stroke="#0038B8" stroke-width="8"/>
+        <polygon points="330,302 259,179 401,179" fill="none" stroke="#0038B8" stroke-width="8"/>
       </svg>
-      <!-- US Flag (simplified) -->
-      <svg class="flag flag-us" viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg">
-        <rect width="760" height="400" fill="#B22234"/>
-        <rect y="30.77" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect y="92.31" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect y="153.85" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect y="215.38" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect y="276.92" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect y="338.46" width="760" height="30.77" fill="#FFFFFF"/>
-        <rect width="304" height="215.38" fill="#3C3B6E"/>
+      <!-- US Flag — 13 stripes, 50-star canton -->
+      <svg class="flag flag-us" viewBox="0 0 1235 650" xmlns="http://www.w3.org/2000/svg">
+        <!-- 13 alternating stripes -->
+        <rect width="1235" height="650" fill="#B22234"/>
+        <rect y="50" width="1235" height="50" fill="#FFFFFF"/>
+        <rect y="150" width="1235" height="50" fill="#FFFFFF"/>
+        <rect y="250" width="1235" height="50" fill="#FFFFFF"/>
+        <rect y="350" width="1235" height="50" fill="#FFFFFF"/>
+        <rect y="450" width="1235" height="50" fill="#FFFFFF"/>
+        <rect y="550" width="1235" height="50" fill="#FFFFFF"/>
+        <!-- Blue canton -->
+        <rect width="494" height="350" fill="#3C3B6E"/>
+        <!-- 50 stars (9 rows, alternating 6 and 5) -->
         <g fill="#FFFFFF">
-          <circle cx="40" cy="25" r="6"/><circle cx="80" cy="25" r="6"/><circle cx="120" cy="25" r="6"/><circle cx="160" cy="25" r="6"/><circle cx="200" cy="25" r="6"/><circle cx="240" cy="25" r="6"/>
-          <circle cx="60" cy="50" r="6"/><circle cx="100" cy="50" r="6"/><circle cx="140" cy="50" r="6"/><circle cx="180" cy="50" r="6"/><circle cx="220" cy="50" r="6"/>
-          <circle cx="40" cy="75" r="6"/><circle cx="80" cy="75" r="6"/><circle cx="120" cy="75" r="6"/><circle cx="160" cy="75" r="6"/><circle cx="200" cy="75" r="6"/><circle cx="240" cy="75" r="6"/>
-          <circle cx="60" cy="100" r="6"/><circle cx="100" cy="100" r="6"/><circle cx="140" cy="100" r="6"/><circle cx="180" cy="100" r="6"/><circle cx="220" cy="100" r="6"/>
-          <circle cx="40" cy="125" r="6"/><circle cx="80" cy="125" r="6"/><circle cx="120" cy="125" r="6"/><circle cx="160" cy="125" r="6"/><circle cx="200" cy="125" r="6"/><circle cx="240" cy="125" r="6"/>
-          <circle cx="60" cy="150" r="6"/><circle cx="100" cy="150" r="6"/><circle cx="140" cy="150" r="6"/><circle cx="180" cy="150" r="6"/><circle cx="220" cy="150" r="6"/>
-          <circle cx="40" cy="175" r="6"/><circle cx="80" cy="175" r="6"/><circle cx="120" cy="175" r="6"/><circle cx="160" cy="175" r="6"/><circle cx="200" cy="175" r="6"/><circle cx="240" cy="175" r="6"/>
-          <circle cx="60" cy="200" r="6"/><circle cx="100" cy="200" r="6"/><circle cx="140" cy="200" r="6"/><circle cx="180" cy="200" r="6"/><circle cx="220" cy="200" r="6"/>
+          <circle cx="41" cy="35" r="10"/><circle cx="82" cy="35" r="10"/><circle cx="123" cy="35" r="10"/><circle cx="164" cy="35" r="10"/><circle cx="205" cy="35" r="10"/><circle cx="247" cy="35" r="10"/><circle cx="288" cy="35" r="10"/><circle cx="329" cy="35" r="10"/><circle cx="370" cy="35" r="10"/><circle cx="411" cy="35" r="10"/><circle cx="453" cy="35" r="10"/>
+          <circle cx="62" cy="70" r="10"/><circle cx="103" cy="70" r="10"/><circle cx="144" cy="70" r="10"/><circle cx="185" cy="70" r="10"/><circle cx="226" cy="70" r="10"/><circle cx="267" cy="70" r="10"/><circle cx="308" cy="70" r="10"/><circle cx="350" cy="70" r="10"/><circle cx="391" cy="70" r="10"/><circle cx="432" cy="70" r="10"/>
+          <circle cx="41" cy="105" r="10"/><circle cx="82" cy="105" r="10"/><circle cx="123" cy="105" r="10"/><circle cx="164" cy="105" r="10"/><circle cx="205" cy="105" r="10"/><circle cx="247" cy="105" r="10"/><circle cx="288" cy="105" r="10"/><circle cx="329" cy="105" r="10"/><circle cx="370" cy="105" r="10"/><circle cx="411" cy="105" r="10"/><circle cx="453" cy="105" r="10"/>
+          <circle cx="62" cy="140" r="10"/><circle cx="103" cy="140" r="10"/><circle cx="144" cy="140" r="10"/><circle cx="185" cy="140" r="10"/><circle cx="226" cy="140" r="10"/><circle cx="267" cy="140" r="10"/><circle cx="308" cy="140" r="10"/><circle cx="350" cy="140" r="10"/><circle cx="391" cy="140" r="10"/><circle cx="432" cy="140" r="10"/>
+          <circle cx="41" cy="175" r="10"/><circle cx="82" cy="175" r="10"/><circle cx="123" cy="175" r="10"/><circle cx="164" cy="175" r="10"/><circle cx="205" cy="175" r="10"/><circle cx="247" cy="175" r="10"/><circle cx="288" cy="175" r="10"/><circle cx="329" cy="175" r="10"/><circle cx="370" cy="175" r="10"/><circle cx="411" cy="175" r="10"/><circle cx="453" cy="175" r="10"/>
+          <circle cx="62" cy="210" r="10"/><circle cx="103" cy="210" r="10"/><circle cx="144" cy="210" r="10"/><circle cx="185" cy="210" r="10"/><circle cx="226" cy="210" r="10"/><circle cx="267" cy="210" r="10"/><circle cx="308" cy="210" r="10"/><circle cx="350" cy="210" r="10"/><circle cx="391" cy="210" r="10"/><circle cx="432" cy="210" r="10"/>
+          <circle cx="41" cy="245" r="10"/><circle cx="82" cy="245" r="10"/><circle cx="123" cy="245" r="10"/><circle cx="164" cy="245" r="10"/><circle cx="205" cy="245" r="10"/><circle cx="247" cy="245" r="10"/><circle cx="288" cy="245" r="10"/><circle cx="329" cy="245" r="10"/><circle cx="370" cy="245" r="10"/><circle cx="411" cy="245" r="10"/><circle cx="453" cy="245" r="10"/>
+          <circle cx="62" cy="280" r="10"/><circle cx="103" cy="280" r="10"/><circle cx="144" cy="280" r="10"/><circle cx="185" cy="280" r="10"/><circle cx="226" cy="280" r="10"/><circle cx="267" cy="280" r="10"/><circle cx="308" cy="280" r="10"/><circle cx="350" cy="280" r="10"/><circle cx="391" cy="280" r="10"/><circle cx="432" cy="280" r="10"/>
+          <circle cx="41" cy="315" r="10"/><circle cx="82" cy="315" r="10"/><circle cx="123" cy="315" r="10"/><circle cx="164" cy="315" r="10"/><circle cx="205" cy="315" r="10"/><circle cx="247" cy="315" r="10"/><circle cx="288" cy="315" r="10"/><circle cx="329" cy="315" r="10"/><circle cx="370" cy="315" r="10"/><circle cx="411" cy="315" r="10"/><circle cx="453" cy="315" r="10"/>
         </g>
       </svg>
     </div>
