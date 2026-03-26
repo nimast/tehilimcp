@@ -21,7 +21,7 @@ For millennia, people of all faiths have turned to the Psalms for comfort and in
 ### Claude Code (one command)
 
 ```bash
-claude mcp add tehilim -- npx tehilim-mcp
+claude mcp add tehilim -- npx @hashemeta/tehilimcp
 ```
 
 ### Claude Desktop
@@ -33,7 +33,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "tehilim": {
       "command": "npx",
-      "args": ["tehilim-mcp"]
+      "args": ["@hashemeta/tehilimcp"]
     }
   }
 }

@@ -1,10 +1,10 @@
 {
-  "name": "tehilim-mcp",
-  "version": "1.0.0",
+  "name": "@hashemeta/tehilimcp",
+  "version": "1.0.1",
   "description": "Bless your AI — Daily Tehilim (Psalms) for every AI chat via MCP",
   "type": "module",
   "bin": {
-    "tehilim-mcp": "./dist/index.js"
+    "tehilimcp": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
