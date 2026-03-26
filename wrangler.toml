@@ -6,7 +6,7 @@ compatibility_date = "2024-12-01"
 bucket = "./docs"
 
 [[routes]]
-pattern = "blessyourprompt.com/*"
+pattern = "blessyourprompt.com"
 custom_domain = true
 
 [observability]
