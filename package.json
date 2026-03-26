@@ -15,7 +15,10 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "fetch-psalms": "tsx scripts/fetch-psalms.ts",
-    "test": "vitest run",
+    "test": "vitest run --exclude 'test/api-integration.test.ts' --exclude 'test/npm-integration.test.ts'",
+    "test:api": "vitest run test/api-integration.test.ts",
+    "test:npm": "vitest run test/npm-integration.test.ts",
+    "test:all": "vitest run",
     "prepublishOnly": "npm run build"
   },
   "engines": {
